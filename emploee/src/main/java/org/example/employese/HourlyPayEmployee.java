@@ -19,6 +19,6 @@ public class HourlyPayEmployee extends Employee{
         String salary = new DecimalFormat("#0.00").format(averageSalary());
         return "HourlyPay Employee\n" +
                 "name : " + name + "\n" +
-                "hourlySalary : " + salary + '\''+'\n';
+                "Salary : " + salary + '\''+'\n';
     }
 }
