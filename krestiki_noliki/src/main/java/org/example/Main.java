@@ -17,6 +17,8 @@ public class Main {
     private static final Random rnd = new Random();
     private static int fieldSizeX;
     private static int fieldSizeY;
+    private static int HUMAN_TURN_X;
+    private static int HUMAN_TURN_Y;
 
     public static void main(String[] args) {
         while (true) {
@@ -25,7 +27,9 @@ public class Main {
             while (true) {
                 humanTurn();
                 printField();
-
+                if (checkWin(HUMAN_TURN_X, HUMAN_TURN_Y, "!!!!!")) break;
+                aiTurn();
+                printField();
             }
         }
     }
@@ -61,10 +65,8 @@ public class Main {
             } else System.out.print(i + 1 + "⎮");
 
             for (int j = 0; j < fieldSizeY; j++) {
-                if (i == 0 && j == fieldSizeY - 1)
-                    System.out.print(field[i][j] + "⌉");
-                else if (i == fieldSizeX - 1 && j == fieldSizeY - 1)
-                    System.out.print(field[i][j] + "⌋");
+                if (i == 0 && j == fieldSizeY - 1) System.out.print(field[i][j] + "⌉");
+                else if (i == fieldSizeX - 1 && j == fieldSizeY - 1) System.out.print(field[i][j] + "⌋");
                 else System.out.print(field[i][j] + "⎮");
             }
             System.out.println();
@@ -84,16 +86,16 @@ public class Main {
         return field[x][y] == EMPTY_FIELD;
     }
 
+
     private static void humanTurn() {
 
-        int x, y;
+
         do {
-            System.out.print("Введите координаты хода X и Y (от 1 до 3) через пробел >>> ");
-            x = SCANNER.nextInt() - 1;
-            y = SCANNER.nextInt() - 1;
-        }
-        while (!isFieldValid(x, y) || !isFieldEmpty(x, y));
-        field[x][y] = HUMAN_DOT;
+            System.out.print("Введите координаты хода X и Y (от 1 до 3) через пробел >>> \n");
+            HUMAN_TURN_X = SCANNER.nextInt() - 1;
+            HUMAN_TURN_Y = SCANNER.nextInt() - 1;
+        } while (!isFieldValid(HUMAN_TURN_X, HUMAN_TURN_Y) || !isFieldEmpty(HUMAN_TURN_X, HUMAN_TURN_Y));
+        field[HUMAN_TURN_X][HUMAN_TURN_Y] = HUMAN_DOT;
     }
 
     private static void aiTurn() {
@@ -101,31 +103,75 @@ public class Main {
         do {
             x = rnd.nextInt(fieldSizeX);
             y = rnd.nextInt(fieldSizeY);
-        }
-        while (!isFieldEmpty(x, y));
+        } while (!isFieldEmpty(x, y));
         field[x][y] = AI_DOT;
     }
 
-    static boolean checkWin(int[] turn) {
-        int x = turn[0];
-        int y = turn[1];
-        return straightLine(fieldSizeX,HUMAN_DOT,x,y);
+    static boolean checkWin(int x, int y, String msg) {
+        if (straightLine(fieldSizeX, HUMAN_DOT, x, y)) {
+            System.out.println(msg);
+            return true;
+        }
+        if (diagonalLine(fieldSizeX, HUMAN_DOT, x, y)) {
+            System.out.println(msg);
+            return true;
+        }
+        return false;
     }
 
     static boolean straightLine(int fieldDirection, char c, int x, int y) {
         int dotsCount = 0;
         for (int i = x; i < fieldDirection; i++) {
-            if(field[i][y]==c)
-                dotsCount++;
+            if (field[i][y] != c) break;
+            dotsCount++;
         }
-        if(dotsCount == DOT_TO_WIN)
-            return true;
-        for (int i = x; i >= 0; i--) {
-            if(field[i][y]==c)
-                dotsCount++;
+
+        if (dotsCount == DOT_TO_WIN) return true;
+
+        for (int i = x - 1; i >= 0; i--) {
+            if (field[i][y] != c) break;
+            dotsCount++;
         }
-        if(dotsCount == DOT_TO_WIN)
-            return true;
+
+        if (dotsCount == DOT_TO_WIN) return true;
+        return false;
+    }
+
+    static boolean diagonalLine(int fieldDirection, char c, int x, int y) {
+        int dotsCount = 0;
+        System.out.println(dotsCount + "dots");
+        for (; x > 0; x--) {
+            System.out.println(x + 1 + "x");
+            for (; y < fieldSizeY; y++) {
+                System.out.println(y + 1 + "y");
+                if (field[x-1][y+1] != c) {
+                    break;
+                }
+                dotsCount++;
+            }
+        }
+
+
+        if (dotsCount == DOT_TO_WIN) return true;
+
+
+        for (int i = x + 1; i < fieldDirection; i++) {
+            System.out.println(i + 1 + "x");
+
+            for (int j = y - 1; j > 0; j--) {
+
+                System.out.println(j + 1 + "y");
+                if (field[i][j] == c) dotsCount++;
+                else break;
+
+            }
+        }
+
+
+        System.out.println(dotsCount + "dots");
+
+
+        if (dotsCount == DOT_TO_WIN) return true;
         return false;
     }
 
