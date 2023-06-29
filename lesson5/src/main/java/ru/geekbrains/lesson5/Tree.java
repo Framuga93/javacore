@@ -5,11 +5,12 @@ import java.io.File;
 public class Tree {
 
     /**
-     * TODO: Доработать метод print, необходимо распечатывать директории и файлы
+     * Рекурсивная функция, выводящая в консоль дерево деректории
      *
-     * @param file
-     * @param indent
-     * @param isLast
+     * @param file файл либо директория
+     * @param indent отступ
+     * @param isLast булево значение являются ли файл/директория последними в директории которая подана в качестве
+     *               аргумента в функцию
      */
     public static void print(File file, String indent, boolean isLast) {
         System.out.print(indent); // рисуем отступ
